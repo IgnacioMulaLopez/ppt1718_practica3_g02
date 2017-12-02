@@ -29,7 +29,7 @@ public class Cliente implements Runnable{
     public synchronized void run() {
    
         try{       
-            InetAddress destination = InetAddress.getByName("www10.ujaen.es");
+            InetAddress destination = InetAddress.getByName("localhost");
             System.out.println("-------------------\r\nIniciando cliente "+mId+"\r\n--------------------");
             
             System.out.println("Conectando con socket "+destination.toString());

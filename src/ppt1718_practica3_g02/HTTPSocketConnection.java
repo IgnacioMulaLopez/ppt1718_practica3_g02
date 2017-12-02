@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Random;
+import java.io.FileReader;
 
 /**
  * Clase de atención de un servidor TCP sencillo
@@ -26,6 +27,19 @@ public class HTTPSocketConnection implements Runnable {
         mSocket = s;
     }
     public void run() {
+        
+        StringBuilder contentBuilder = new StringBuilder();
+            try {
+                BufferedReader in = new BufferedReader(new FileReader("C:\\Users\\ignac\\Documents\\GitHub\\PPT_Practica3\\src\\ppt1718_practica3_g02\\index.html"));
+                String str;
+                while ((str = in.readLine()) != null) {
+                    contentBuilder.append(str);
+                }
+                in.close();
+            }   catch (IOException e) {
+                }   
+        String content = contentBuilder.toString();
+        
         Random r = new Random(System.currentTimeMillis());
         int n=r.nextInt();
         String request_line="";
@@ -49,7 +63,7 @@ public class HTTPSocketConnection implements Runnable {
                       }
                       
                       if(parts[1].equalsIgnoreCase("/")){
-                          outmesg="HTTP/1.1 200 OK \r\nContent-type:text/html\r\n\r\n <html><body><h1>Hola"+n+"veces</h1></body></html>";
+                          outmesg="HTTP/1.1 200 OK \r\nContent-type:text/html\r\n\r\n"+content+"";
                       }else{
                           outmesg="HTTP/1.1 404r\nContent-type:text/html\r\n\r\n <html><body><h1>No encontrado</h1></body></html>";
                       }
