@@ -7,8 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
-import java.io.FileReader;
+import java.util.Date;
 
 /**
  * Clase de atención de un servidor TCP sencillo
@@ -30,23 +33,14 @@ public class HTTPSocketConnection implements Runnable{
     }
     
     public void run() {
-        /*
-        StringBuilder contentBuilder = new StringBuilder();
-            try {
-                BufferedReader in = new BufferedReader(new FileReader("C:\\Users\\ignac\\Documents\\GitHub\\PPT_Practica3\\src\\ppt1718_practica3_g02\\index.html"));
-                String str;
-                while ((str = in.readLine()) != null) {
-                    contentBuilder.append(str);
-                }
-                in.close();
-            }   catch (IOException e) {
-                }   
-        String content = contentBuilder.toString();
-        */
+        
+        Instant instant = Instant.now();
+        String fecha = DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneOffset.UTC).format(instant);
         
         Random r = new Random(System.currentTimeMillis());
         int n=r.nextInt();
         String request_line="";
+        String Conn="",C_type="",C_leng="",Allow="",Server="";
         BufferedReader input;
         DataOutputStream output;
         FileInputStream input_file;
@@ -56,70 +50,81 @@ public class HTTPSocketConnection implements Runnable{
             input = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
             output = new DataOutputStream(mSocket.getOutputStream());
             do{
-                
+                Allow="GET";
+                Server="??";
                 request_line= input.readLine();
-                //Esto se deberíasacar del bucle.
                 if(request_line.startsWith("GET")){
                     
                     String resourceFile="";
                     String parts[]=request_line.split(" ");
                     if(parts.length==3){
                         
-                        //Para content-type, mirar la extensión del archivo.
-                        
-                      if(parts[0].equalsIgnoreCase("GET")){
-                      }else{
-                          outmesg="HTTP/1.1 405\r\nContent-type:text/html\r\n\r\n <html><body><h1>Metodo incorrecto</h1></body></html>";
-                      }
-                      
-                      if(parts[1].equalsIgnoreCase("/")){
-                          outmesg="HTTP/1.1 200 OK \r\nContent-type:text/html\r\n\r\n";
-                          resourceFile="index.html";
-                          System.out.println("Content-Type = text/html");
-                      }else if (parts[1].equalsIgnoreCase("/imagen.jpg")){
-                          outmesg="HTTP/1.1 200 OK \r\nContent-type:image \r\n\r\n";
-                          resourceFile="imagen.jpg";
-                          System.out.println("Content-Type = Image");
-                      }
-                      
-                          
-                          outdata=leerRecurso(resourceFile);
-                          System.out.println("Content-Length: "+outdata.length+"");
-                          //cabecera contentllength con .length
-                        if(outdata==null){
-                          outmesg="HTTP/1.1 404r\nContent-type:text/html\r\n\r\n <html><body><h1>No encontrado</h1></body></html>";
-                          outdata=outmesg.getBytes();
-                      }else{
+                        if(parts[0].equalsIgnoreCase("GET")){ 
                             
-                        outmesg="HTTP/1.1 200 OK \r\nContent-type:text/html\r\n\r\n"+outdata+"";
+                            if(parts[1].equalsIgnoreCase("/") || parts[1].equalsIgnoreCase("/index.html")){                                
+                                outmesg="HTTP/1.1 200 OK \r\nContent-type:text/html\r\n\r\n";
+                                resourceFile="index.html";
+                                System.out.println("HTTP/1.1 200 OK");
+                                C_type="text/html";
+                                
+                            }
+                            
+                            else if (parts[1].equalsIgnoreCase("/imagen.jpg")){                                
+                                outmesg="HTTP/1.1 200 OK \r\nContent-type:image \r\n\r\n";
+                                resourceFile="imagen.jpg";
+                                System.out.println("HTTP/1.1 200 OK");
+                                C_type="Image";
+                            }
+                            
+                            outdata=leerRecurso(resourceFile);
+                            
+                            if(outdata==null){
+                                outmesg="HTTP/1.1 404r\nContent-type:text/html\r\n\r\n <html><body><h1>No encontrado</h1></body></html>";
+                                outdata=outmesg.getBytes();
+                                System.out.println("HTTP/1.1 404 Error");
+                            }
+                            
+                            else{          
+                                outmesg="HTTP/1.1 200 OK \r\nContent-type:text/html\r\n\r\n"+outdata+"";
+                            }
+                            C_leng=""+outdata.length+"";
+                            
+                            if(parts[2].equalsIgnoreCase("HTTP/2")){
+                                outmesg="HTTP/1.1 505\r\nContent-type:text/html\r\n\r\n <html><body><h1>Version del protocolo no compatible</h1></body></html>";
+                                outdata=outmesg.getBytes();
+                                System.out.println("HTTP/1.1 505 Error");
+                            } 
                         }
-                    
-                      
-                      if(parts[2].equalsIgnoreCase("HTTP/2")){
-                          outmesg="HTTP/1.1 505\r\nContent-type:text/html\r\n\r\n <html><body><h1>Version del protocolo no compatible</h1></body></html>";
-                          outdata=outmesg.getBytes();
-                      }
                     }else{
                         outmesg="HTTP/1.1 400\r\n";
                         outdata=outmesg.getBytes();
-                      }
-                } else if(request_line.startsWith("Connection")){
-                    request_line="Connection = Closed";
-                } else if (request_line.startsWith("Archivo")){
-                    outmesg="HTTP/1.1 404r\nContent-type:text/html\r\n\r\n <html><body><h1>No encontrado</h1></body></html>";
-                          outdata=outmesg.getBytes();
+                        System.out.println("HTTP/1.1 400 Error");
+                    }
+                }else if(request_line.startsWith("Connection")){
+                    Conn="Closed";
+                }else if(request_line.startsWith("POST")){
+                    outmesg="HTTP/1.1 405\r\nContent-type:text/html\r\n\r\n <html><body><h1>Metodo incorrecto</h1></body></html>";
+                    outdata=outmesg.getBytes();
+                    System.out.println("HTTP/1.1 405 Error");
                 }
                 
-                System.out.println(request_line);   
+            //System.out.println(request_line);    
             }while(request_line.compareTo("")!=0);
             
             //CABECERAS
-           
-            output.write(outdata);
-            input.close();
-            output.close();
-            mSocket.close();
-            n++;
+            System.out.println("Date: "+fecha+"");
+            System.out.println("Server: "+Server+"");
+            System.out.println("Allow: "+Allow+"");
+            System.out.println("Content-Type: "+C_type+"");
+            System.out.println("Content-Length: "+C_leng+"");
+            System.out.println("Connection: "+Conn+""); 
+            System.out.println(" ");
+            
+        output.write(outdata);
+        input.close();
+        output.close();
+        mSocket.close();
+        n++;
         } catch (IOException e) {
             System.err.println("Exception" + e.getMessage());
         }
@@ -149,12 +154,13 @@ public class HTTPSocketConnection implements Runnable{
                                 datos= new String(b,0,0,i);
                                 //System.out.println(datos);
                         }
-                        System.out.println(b.toString());
+                        //System.out.println(b.toString());
                 }catch(IOException e){
                         System.out.println("Error al leer");
                 }
         }catch(FileNotFoundException e){
                 System.out.println("Archivo no existe");
+                b=null;
         }
         
         return b;
