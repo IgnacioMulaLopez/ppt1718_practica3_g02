@@ -95,10 +95,6 @@ public class HTTPSocketConnection implements Runnable{
                                 System.out.println("HTTP/1.1 505 Error");
                             } 
                         }
-                    }else{
-                        outmesg="HTTP/1.1 400\r\n";
-                        outdata=outmesg.getBytes();
-                        System.out.println("HTTP/1.1 400 Error");
                     }
                 }else if(request_line.startsWith("Connection")){
                     Conn="Closed";
@@ -106,7 +102,11 @@ public class HTTPSocketConnection implements Runnable{
                     outmesg="HTTP/1.1 405\r\nContent-type:text/html\r\n\r\n <html><body><h1>Metodo incorrecto</h1></body></html>";
                     outdata=outmesg.getBytes();
                     System.out.println("HTTP/1.1 405 Error");
-                }
+                }else{
+                        outmesg="HTTP/1.1 400\r\n";
+                        outdata=outmesg.getBytes();
+                        System.out.println("HTTP/1.1 400 Error");
+                    }
                 
             //System.out.println(request_line);    
             }while(request_line.compareTo("")!=0);
