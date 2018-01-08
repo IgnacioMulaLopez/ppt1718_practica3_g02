@@ -88,16 +88,23 @@ public class HTTPSocketConnection implements Runnable{
                         
                         if(parts[0].equalsIgnoreCase("GET")){                                   // Comprobamos si la primera parte es igual a "GET".
                                                                                                 // Comprobamos que la segunda parte sea igual al fichero que tenemos.  
-                            if(parts[1].equalsIgnoreCase("/") || parts[1].equalsIgnoreCase("/index.html")){                              
+                            if(parts[1].equalsIgnoreCase("/")){                              
                                 outmesg="HTTP/1.1 200 OK \r\nContent-type:text/html\r\n\r\n";   // Le pasamos a "outmesg" el mensaje correspondiente.
                                 resourceFile="index.html";                                      // Le pasamos a "resourceFile", el nombre del fichero a abrir.
                                 System.out.println("HTTP/1.1 200 OK");                          // Mostramos por pantalla un mensaje de OK.
                                 C_type="text/html";                                             // Le pasamos a la cabecera "C_type" el tipo del fichero.   
                             }                                                                   // Fin de la comprobación del fichero "index.html".
                             
-                            else if (parts[1].equalsIgnoreCase("/imagen.jpg")){                 //En el caso de que el archivo solicitado sea "imagen.jpg".                             
+                            else {                                                              //En el caso de que el archivo solicitado sea "imagen.jpg".                             
                                 outmesg="HTTP/1.1 200 OK \r\nContent-type:image \r\n\r\n";      // Le pasamos a "outmesg" el mensaje correspondiente.
-                                resourceFile="imagen.jpg";                                      // Le pasamos a "resourceFile", el nombre del fichero a abrir.
+                                resourceFile="";
+                                
+                                String recur = parts[1];
+                                char[] aRecurso = recur.toCharArray();
+                                for (int x=1; x<aRecurso.length; x++){
+                                    resourceFile=resourceFile+aRecurso[x];
+                                }
+                                                                                                // Le pasamos a "resourceFile", el nombre del fichero a abrir.
                                 System.out.println("HTTP/1.1 200 OK");                          // Mostramos por pantalla un mensaje de OK.
                                 C_type="Image";                                                 // Le pasamos a la cabecera "C_type" el tipo del fichero.
                             }                                                                   // Fin de la comprobación del fichero "imagen.jpg".
@@ -105,7 +112,7 @@ public class HTTPSocketConnection implements Runnable{
                             outdata=leerRecurso(resourceFile);                                  // LLamamos a la función "leerRecurso" con el nombre del fichero a leer, para rellenar "outdata".
                             
                             if(outdata==null){                                                  // En el caso de que no se haya encontrado el archivo, y por tanto "outdata" esté vacío.
-                                outmesg="HTTP/1.1 404r\nContent-type:text/html\r\n\r\n <html><body><h1>No encontrado</h1></body></html>"; // Informamos al cliente.
+                                outmesg="HTTP/1.1 404\r\nContent-type:text/html\r\n\r\n <html><body><h1>No encontrado</h1></body></html>"; // Informamos al cliente.
                                 outdata=outmesg.getBytes();                                     // La pasamos a "outdata" los bytes de "outmesg".
                                 System.out.println("HTTP/1.1 404 Error");                       // Informamos por pantalla del error producido.
                             }                                                                   // Fin del caso de archivo no encontrado.
@@ -172,7 +179,7 @@ public class HTTPSocketConnection implements Runnable{
         /*
          * a continuación se definen las variables necesarias para esta función.
          */         
-        File f = new File ("C:\\\\Users\\\\ignac\\\\Documents\\\\GitHub\\\\PPT_Practica3\\\\src\\\\ppt1718_practica3_g02\\\\"+resourceFile+"");        
+        File f = new File (resourceFile);        
         FileInputStream miArch;                                                 // La variable "miArch".
         long s;                                                                 // La variable "s" de tipo long.
         String datos;                                                           // Un string llamadao "datos".
