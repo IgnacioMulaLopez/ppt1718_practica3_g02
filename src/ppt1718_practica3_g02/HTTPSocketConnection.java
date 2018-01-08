@@ -97,13 +97,13 @@ public class HTTPSocketConnection implements Runnable{
                             
                             else {                                                              //En el caso de que el archivo solicitado sea "imagen.jpg".                             
                                 outmesg="HTTP/1.1 200 OK \r\nContent-type:image \r\n\r\n";      // Le pasamos a "outmesg" el mensaje correspondiente.
-                                resourceFile="";
+                                resourceFile="";                                                // Vaciamos la variable resourceFile.
                                 
-                                String recur = parts[1];
-                                char[] aRecurso = recur.toCharArray();
-                                for (int x=1; x<aRecurso.length; x++){
-                                    resourceFile=resourceFile+aRecurso[x];
-                                }
+                                String recur = parts[1];                                        // Le pasamos al String recur, la parte uno de requestLine.
+                                char[] aRecurso = recur.toCharArray();                          //Creamos el vector aRecurso, que se llenará con los caracteres de recur.
+                                for (int x=1; x<aRecurso.length; x++){                          // Creamos un bucle for que recorra el vector aRecurso.
+                                    resourceFile=resourceFile+aRecurso[x];                      // Rellenamos la variable resourceFile, con el contenido del vector aRecurso.
+                                }                                                               // Fin del bucle for.
                                                                                                 // Le pasamos a "resourceFile", el nombre del fichero a abrir.
                                 System.out.println("HTTP/1.1 200 OK");                          // Mostramos por pantalla un mensaje de OK.
                                 C_type="Image";                                                 // Le pasamos a la cabecera "C_type" el tipo del fichero.
