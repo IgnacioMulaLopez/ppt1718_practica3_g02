@@ -204,38 +204,18 @@ public class HTTPSocketConnection implements Runnable{
         byte b[] = new byte[z];                                                 // La variable "b" de tipo byte.
         
         try{                                                                    // Comenzamos con nuestra función.
-<<<<<<< HEAD
                 miArch = new FileInputStream(f);                                // Le pasamos a "miArch" el contenido de "f".               
                 i= miArch.read(b);                                              // En la variable "i" leeremos "b".
       
-=======
-                miArch = new FileInputStream(f);                                // Le pasamos a "miArch" el contenido de "f".
-                               
-                i= miArch.read(b);                                     // Se realizará por tanto.
-               //         while( ( !=-1 ){                      // Mientras el dato leido de "miArch" no sea menos uno.
-                               // datos= new String(b,0,0,i);                     // Vamos rellenando la variable "datos".;
-                 //       }                                                       // Fin de la condición del "while".
-                        //System.out.println(b.toString());
-               
->>>>>>> bc291b4d573381a1b5822589c5412e95c1289e01
         }catch(FileNotFoundException e){                                        // En el caso de que no se encuentre el archivo.
                 System.out.println("Archivo no existe");                        // Informamos por pantalla de lo ocurrido.
                 b=null;                                                         // Igualamos la variable "b" a null.
         }  
-<<<<<<< HEAD
         catch(IOException e){                                                   // En el caso de que se produzca un error.
                System.out.println("Error al leer");                             // Informamos por pantalla de lo ocurrido.
                 b= null;                                                        // Igualamos la variable "b" a null.
         } finally{                                                              // Para terminar.
             return b;                                                           // Devolvemos la variable "b".
         }
-=======
-        catch(IOException e){                                          // En el caso de que se produzca un error.
-               System.out.println("Error al leer");   
-                b= null;// Informaremos por pantalla del mismo.
-        } finally{
-            return b; 
-        }// Para terminar devolvemos el valor de "b".
->>>>>>> bc291b4d573381a1b5822589c5412e95c1289e01
     }                                                                           // Fin de la función "leerRecurso".
 }                                                                               // Fin de la clase HTTPSocketConnection.
