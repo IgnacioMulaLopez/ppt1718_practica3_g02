@@ -92,10 +92,18 @@ public class HTTPSocketConnection implements Runnable{
                     
                     String resourceFile="";                                                     // Definimos el string "resourceFile", y lo inicializamos a vacío.
                     String parts[]=request_line.split(" ");                                     // Definimos la variable "parts", que será igual al contenido de "request_line" dividido en partes.
-                    if(parts.length==3){                                                        // En el caso de que el número de partes sea igual a tres.
-                        
+                    
+                    if(parts.length!=3){                                                        // En el caso de que el número de partes sea distinto de tres.
+                        status_line="HTTP/1.1 400 Error\r\n";                                   // Definmos la línea de estado.
+                        header=Fech+"\r\n"+Server+"\r\n"+Allow+"\r\n"+Conn+"\r\n";              // Definimos las cabeceras necesarias.
+                        outmesg="Error de formato\r\n";                                         // Definimos el mensaje "outmesg".
+                        outdata=outmesg.getBytes();                                             // La pasamos a "outdata" los bytes de "outmesg".
+                        System.out.println(status_line);                                        // Mostramos por pantalla la linea de estado.
+                        System.out.println(header);                                             // Mostramos por pantalla las cabeceras.
+                    }                                                                           // Fin del caso de error 400.
+                    else{                                                                       // En el caso de que el nuumero de partes sea igual a tres.  
                         if(parts[0].equalsIgnoreCase("GET")){                                   // Comprobamos si la primera parte es igual a "GET".
-                                                                                                
+                                                                                         
                             if(parts[1].equalsIgnoreCase("/")){                                 // Comprobamos si la segunda parte no indica ningun fichero.
                                 resourceFile="index.html";                                      // Le pasamos a "resourceFile", el fichero "index.html"
                                 C_type="Content Type: text/html";                               // Le pasamos a la cabecera "C_type" el tipo del fichero.   
@@ -132,12 +140,10 @@ public class HTTPSocketConnection implements Runnable{
                                 C_leng="Content Length: "+outdata.length+"";                    // Rellenamos la cabecera "Content Length".
                                 status_line="HTTP/1.1 200 OK\r\n";                              // Definimos la linea de estado.
                                 header=Fech+"\r\n"+Server+"\r\n"+Allow+"\r\n"+C_type+"\r\n"+C_leng+"\r\n"+Conn+"\r\n"; // Definimos las cabeceras necesarias.
-                                outmesg=""+outdata+"";                                          // Enviamos el contenido del fichero al cliente.
+                                outmesg=status_line+header+""+outdata+"";                                          // Enviamos el contenido del fichero al cliente.
                                 System.out.println(status_line);                                // Mostramos por pantalla la linea de estado.
                                 System.out.println(header);                                     // Mostramos por pantalla las cabeceras.
                             }                                                                   // Fin del caso de fichero encontrado.
-                            
-                            
                             
                             if(parts[2].equalsIgnoreCase("HTTP/2")){                            // En el caso de que la tercera parte sea "HTTP/2".
                                                                                                 // Se informará al cliente, de que está utilizando una versión incorrecta.
@@ -148,16 +154,10 @@ public class HTTPSocketConnection implements Runnable{
                                 System.out.println(status_line);                                // Mostramos por pantalla la linea de estado.
                                 System.out.println(header);                                     // Mostramos por pantalla las cabeceras.
                             }                                                                   // Fin del caso de versión incorrecta.
+
                         }                                                                       // Fin de la condición de que la primera parte sea "GET"
                     
-                    }else{                                                                      // En el caso de que el número de partes no sea igual a tres.
-                        status_line="HTTP/1.1 400 Error\r\n";                                   // Definmos la línea de estado.
-                        header=Fech+"\r\n"+Server+"\r\n"+Allow+"\r\n"+Conn+"\r\n";              // Definimos las cabeceras necesarias.
-                        outmesg="Error de formato\r\n";                                         // Definimos el mensaje "outmesg".
-                        outdata=outmesg.getBytes();                                             // La pasamos a "outdata" los bytes de "outmesg".
-                        System.out.println(status_line);                                        // Mostramos por pantalla la linea de estado.
-                        System.out.println(header);                                             // Mostramos por pantalla las cabeceras.
-                    }                                                                           // Fin del caso de error 400.
+                    }
                 
                 }else if(request_line.startsWith("POST") || request_line.startsWith("HEAD") || request_line.startsWith("OPTIONS") || request_line.startsWith("PUT") || request_line.startsWith("DELETE") || request_line.startsWith("TRACE") || request_line.startsWith("CONNECT")){
                                                                                                 // Se informará al cliente de que está usando un método no permitido.
