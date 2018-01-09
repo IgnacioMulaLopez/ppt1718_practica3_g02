@@ -97,6 +97,8 @@ public class HTTPSocketConnection implements Runnable{
                         status_line="HTTP/1.1 400 Error\r\n";                                   // Definmos la línea de estado.
                         header=Fech+"\r\n"+Server+"\r\n"+Allow+"\r\n"+Conn+"\r\n";              // Definimos las cabeceras necesarias.
                         outmesg="Error de formato\r\n";                                         // Definimos el mensaje "outmesg".
+                        //outstatus=status_line.getBytes();
+                        //outheader=header.getBytes();
                         outdata=outmesg.getBytes();                                             // La pasamos a "outdata" los bytes de "outmesg".
                         System.out.println(status_line);                                        // Mostramos por pantalla la linea de estado.
                         System.out.println(header);                                             // Mostramos por pantalla las cabeceras.
@@ -131,6 +133,8 @@ public class HTTPSocketConnection implements Runnable{
                                 status_line="HTTP/1.1 404 Error\r\n";                           // Definimos la linea de estado.
                                 header=Fech+"\r\n"+Server+"\r\n"+Allow+"\r\n"+Conn+"\r\n";      // Definimos las cabeceras necesarias.
                                 outmesg="<html><body><h1>Error 404. Archivo no encontrado</h1></body></html>"; // Definimos el mensaje outmesg.
+                                //outstatus=status_line.getBytes();
+                                //outheader=header.getBytes();
                                 outdata=outmesg.getBytes();                                     // La pasamos a "outdata" los bytes de "outmesg".
                                 System.out.println(status_line);                                // Mostramos por pantalla la linea de estado.
                                 System.out.println(header);                                     // Mostramos por pantalla las cabeceras.
@@ -141,6 +145,8 @@ public class HTTPSocketConnection implements Runnable{
                                 status_line="HTTP/1.1 200 OK\r\n";                              // Definimos la linea de estado.
                                 header=Fech+"\r\n"+Server+"\r\n"+Allow+"\r\n"+C_type+"\r\n"+C_leng+"\r\n"+Conn+"\r\n"; // Definimos las cabeceras necesarias.
                                 outmesg=status_line+header+""+outdata+"";                                          // Enviamos el contenido del fichero al cliente.
+                                //outstatus=status_line.getBytes();
+                                //outheader=header.getBytes();
                                 System.out.println(status_line);                                // Mostramos por pantalla la linea de estado.
                                 System.out.println(header);                                     // Mostramos por pantalla las cabeceras.
                             }                                                                   // Fin del caso de fichero encontrado.
@@ -150,6 +156,8 @@ public class HTTPSocketConnection implements Runnable{
                                 status_line="HTTP/1.1 505 Error\r\n";                           // Definmos la línea de estado.
                                 header=Fech+"\r\n"+Server+"\r\n"+Allow+"\r\n"+Conn+"\r\n";      // Definimos las cabeceras necesarias.
                                 outmesg="Version del protocolo no compatible\r\n";              // Definimos el mensaje "outmesg".
+                                //outstatus=status_line.getBytes();
+                                //outheader=header.getBytes();
                                 outdata=outmesg.getBytes();                                     // La pasamos a "outdata" los bytes de "outmesg".
                                 System.out.println(status_line);                                // Mostramos por pantalla la linea de estado.
                                 System.out.println(header);                                     // Mostramos por pantalla las cabeceras.
@@ -164,14 +172,14 @@ public class HTTPSocketConnection implements Runnable{
                     status_line="HTTP/1.1 405 Error\r\n";                                       // Definmos la línea de estado.
                     header=Fech+"\r\n"+Server+"\r\n"+Allow+"\r\n"+Conn+"\r\n";                  // Definimos las cabeceras necesarias.
                     outmesg="<html><body><h1>Error 405. Metodo no permitido</h1></body></html>";// Definimos el mensaje "outmesg".
+                    //outstatus=status_line.getBytes();
+                    //outheader=header.getBytes();
                     outdata=outmesg.getBytes();                                                 // La pasamos a "outdata" los bytes de "outmesg".
                     System.out.println(status_line);                                            // Mostramos por pantalla la linea de estado.
                     System.out.println(header);                                                 // Mostramos por pantalla las cabeceras.
                 }                                                                               // Fin del caso de método incorrecto.                
             }while(request_line.compareTo("")!=0);                                              // Implementamos la condición para que se repita el "do".
-        
-        //outstatus=status_line.getBytes();
-        //outheader=header.getBytes();
+    
         //output.write(outstatus);
         //output.write(outheader);
         output.write(outdata);                                                                  // Escribimos en "output" el contenido de "outdata".
